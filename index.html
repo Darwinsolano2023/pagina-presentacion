@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ISD Ingeniero Darwin Solano — Software, Datos y Ciberseguridad</title>
+  <meta name="description" content="Ingeniero de software. Desarrollo, datos, ciberseguridad, cloud y automatización para empresas que necesitan tecnología confiable.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root[data-theme="dark"] {
+      --bg: #101827;
+      --panel: #151f31;
+      --panel-hover: #1c2840;
+      --glass: rgba(255, 255, 255, 0.04);
+      --ink: #ffffff;
+      --muted: #969eac;
+      --line: #313947;
+      --blue: #1a74c9;
+      --bt: #1a74c9;
+      --on-blue: #ffffff;
+      --code-bg: #0b1220;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+    }
+
+    :root[data-theme="light"] {
+      --bg: #f4f8fd;
+      --panel: #ffffff;
+      --panel-hover: #eaf3fc;
+      --glass: rgba(16, 24, 39, 0.035);
+      --ink: #101827;
+      --muted: #5b6b82;
+      --line: #d6e2f0;
+      --blue: #1a74c9;
+      --bt: #1a74c9;
+      --on-blue: #ffffff;
+      --code-bg: #eaf1fa;
+      --accent-green: #059669;
+      --accent-red: #dc2626;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 90px;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 400 16px/1.6 'Plus Jakarta Sans', system-ui, sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    ::selection { background: var(--blue); color: var(--on-blue); }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* EFECTO DE SCROLL: ENTRADA PROFUNDA POR SECCIÓN */
+    .reveal-section {
+      opacity: 0;
+      transform: perspective(1400px) translateY(140px) rotateX(10deg) scale(.9);
+      transform-origin: 50% 0%;
+      filter: blur(12px);
+      transition: opacity 1.1s cubic-bezier(.16,1,.3,1),
+                  transform 1.2s cubic-bezier(.16,1,.3,1),
+                  filter 1s cubic-bezier(.16,1,.3,1);
+      will-change: opacity, transform, filter;
+    }
+    .reveal-section.visible {
+      opacity: 1;
+      transform: perspective(1400px) translateY(0) rotateX(0) scale(1);
+      filter: blur(0);
+    }
+
+    /* Entrada escalonada de los elementos internos */
+    .reveal-section.visible .st {
+      animation: stIn 1s cubic-bezier(.16,1,.3,1) backwards;
+      animation-delay: calc(var(--i, 0) * 110ms + 250ms);
+    }
+    @keyframes stIn {
+      from { opacity: 0; transform: translate(var(--x, 0px), 80px) scale(.92); filter: blur(10px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal-section { opacity: 1; transform: none; filter: none; transition: none; }
+      .reveal-section.visible .st { animation: none; }
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 10px;
+      left: 0;
+      right: 0;
+      z-index: 50;
+    }
+
+    header .bar {
+      max-width: 1120px;
+      margin: 0 auto;
+      width: calc(100% - 16px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px 8px 16px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 999px;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo i {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--blue);
+      display: block;
+    }
+
+    .logo-text-full { display: none; }
+    .logo-text-short { display: inline; }
+
+    @media(min-width: 600px) {
+      .logo-text-full { display: inline; }
+      .logo-text-short { display: none; }
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    nav a:not(.btn) { display: none; }
+
+    @media(min-width: 768px) {
+      nav { gap: 20px; }
+      nav a:not(.btn) { display: inline-block; }
+      .wrap { padding: 0 28px; }
+    }
+
+    .theme-toggle {
+      background: var(--glass);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--bt);
+      background: var(--panel-hover);
+    }
+
+    .theme-toggle svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 14.5px;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid var(--blue);
+      background: var(--blue);
+      color: #fff;
+      transition: transform 0.25s, background 0.25s;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn.out {
+      background: transparent;
+      border-color: var(--line);
+      color: var(--ink);
+    }
+
+    .btn.out:hover { border-color: var(--bt); }
+
+    nav .btn { padding: 8px 14px; font-size: 13.5px; }
+
+    /* Hero */
+    .hero {
+      padding: 120px 0 50px;
+      position: relative;
+    }
+
+    .hero .wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    @media(min-width: 992px) {
+      .hero .wrap { grid-template-columns: 1.05fr 1fr; }
+      .hero { padding: 150px 0 70px; }
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--glass);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .pill i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-green);
+    }
+
+    h1 {
+      font-size: clamp(32px, 8vw, 64px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--bt);
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: clamp(15px, 2vw, 19px);
+      max-width: 48ch;
+      margin: 20px 0 28px;
+    }
+
+    .cta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .visual {
+      position: relative;
+      aspect-ratio: 1/1;
+      max-height: 420px;
+      width: 100%;
+      margin: 0 auto;
+      cursor: pointer;
+    }
+
+    @media(min-width: 992px) {
+      .visual { max-height: 520px; }
+    }
+
+    #net { width: 100%; height: 100%; display: block; }
+
+    .chip {
+      position: absolute;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .chip b { color: var(--bt); }
+
+    .chip:nth-of-type(1) { top: 8%; left: 0%; }
+    .chip:nth-of-type(2) { top: 45%; right: -2%; }
+    .chip:nth-of-type(3) { bottom: 6%; left: 6%; }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr;
+      margin-top: 40px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel);
+      overflow: hidden;
+    }
+
+    @media(min-width: 768px) {
+      .stats { grid-template-columns: repeat(3, 1fr); margin-top: 60px; }
+    }
+
+    .stats div {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stats div:last-child { border-bottom: none; }
+
+    @media(min-width: 768px) {
+      .stats div {
+        border-bottom: none;
+        border-right: 1px solid var(--line);
+        padding: 24px 28px;
+      }
+      .stats div:last-child { border-right: none; }
+    }
+
+    .stats b {
+      display: block;
+      font-size: clamp(28px, 6vw, 48px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .stats span { color: var(--muted); font-size: 14px; }
+
+    .band {
+      margin-top: 60px;
+      border-block: 1px solid var(--line);
+      overflow: hidden;
+      white-space: nowrap;
+      background: var(--glass);
+    }
+
+    .band div {
+      display: inline-flex;
+      gap: 40px;
+      padding: 16px 0;
+      animation: mq 30s linear infinite;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 15px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .band span::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--blue);
+      border-radius: 2px;
+      margin-right: 40px;
+    }
+
+    @keyframes mq { to { transform: translateX(-50%); } }
+
+    /* Bento Grid */
+    section { padding: 80px 0 0; }
+    @media(min-width: 768px) { section { padding: 110px 0 0; } }
+
+    .eyebrow {
+      display: inline-block;
+      color: var(--bt);
+      font-weight: 700;
+      font-size: 12.5px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: clamp(26px, 5vw, 46px);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+    }
+
+    .intro {
+      color: var(--muted);
+      max-width: 52ch;
+      margin: 14px 0 36px;
+      font-size: 16px;
+    }
+
+    .bento {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media(min-width: 768px) {
+      .bento { grid-template-columns: repeat(6, 1fr); gap: 18px; }
+    }
+
+    .cell {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+      padding: 24px;
+      overflow: hidden;
+      transition: border-color .3s, transform .3s;
+      min-height: 290px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cell:hover {
+      border-color: var(--blue);
+      transform: translateY(-3px);
+    }
+
+    .s4 { grid-column: span 6; }
+    .s2 { grid-column: span 6; }
+    .s6 {
+      grid-column: span 6;
+      min-height: 0;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    @media(min-width: 768px) {
+      .s4 { grid-column: span 4; }
+      .s2 { grid-column: span 2; }
+      .s6 { grid-column: span 6; flex-direction: row; align-items: center; justify-content: space-between; gap: 24px; }
+    }
+
+    .ic {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--glass);
+      display: grid;
+      place-items: center;
+      margin-bottom: 16px;
+      color: var(--bt);
+    }
+
+    .ic svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .cell h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .cell p { color: var(--muted); font-size: 14.5px; }
+
+    /* 1. Desarrollo de Software */
+    .code-terminal {
+      margin-top: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--code-bg);
+      padding: 12px 14px;
+      font: 11px/1.5 'JetBrains Mono', monospace;
+      color: var(--muted);
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .code-line { white-space: nowrap; overflow: hidden; }
+    .code-line .k { color: var(--bt); font-weight: 600; }
+    .code-line .f { color: var(--ink); }
+    .code-line .s { color: #f5b454; }
+    .cursor {
+      display: inline-block;
+      width: 5px;
+      height: 11px;
+      background: var(--bt);
+      vertical-align: middle;
+      animation: blink 0.8s infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* 2. Datos: Código de Barras */
+    .data-card-box {
+      margin-top: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--code-bg);
+      padding: 14px;
+      display: flex;
+      align-items: flex-end;
+      height: 120px;
+    }
+    .barcode-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 100%;
+      width: 100%;
+    }
+    .barcode-bars i {
+      flex: 1;
+      background: var(--blue);
+      border-radius: 2px 2px 0 0;
+      height: 30%;
+      animation: barMove 2s ease-in-out infinite alternate;
+    }
+    .barcode-bars i:nth-child(1) { --h: 65%; }
+    .barcode-bars i:nth-child(2) { --h: 95%; animation-delay: .2s; }
+    .barcode-bars i:nth-child(3) { --h: 40%; animation-delay: .4s; }
+    .barcode-bars i:nth-child(4) { --h: 100%; animation-delay: .6s; }
+    .barcode-bars i:nth-child(5) { --h: 75%; animation-delay: .8s; }
+    .barcode-bars i:nth-child(6) { --h: 55%; animation-delay: 1s; }
+    .barcode-bars i:nth-child(7) { --h: 90%; animation-delay: 1.2s; }
+    .barcode-bars i:nth-child(8) { --h: 50%; animation-delay: 1.4s; }
+    @keyframes barMove { 0% { height: 20%; } 100% { height: var(--h); } }
+
+    /* 3. Ciberseguridad */
+    .scan-box-scatter {
+      position: relative;
+      height: 120px;
+      margin-top: auto;
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      background: var(--code-bg);
+      overflow: hidden;
+      padding: 8px;
+    }
+    .scan-header {
+      font-size: 10.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--bt);
+      font-weight: 600;
+      z-index: 3;
+      position: relative;
+    }
+    .scatter-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green);
+      animation: pulseDot 2s infinite ease-in-out;
+      z-index: 2;
+    }
+    .scatter-dot.threat {
+      background: var(--accent-red);
+      box-shadow: 0 0 10px var(--accent-red);
+      animation: blinkThreat 0.7s infinite alternate;
+    }
+    @keyframes pulseDot { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+    @keyframes blinkThreat { from { opacity: 0.2; } to { opacity: 1; } }
+
+    .scanner-line {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--blue);
+      box-shadow: 0 0 12px 2px var(--blue);
+      animation: moveScanner 2.5s ease-in-out infinite alternate;
+      z-index: 4;
+    }
+    @keyframes moveScanner {
+      0% { top: 0%; }
+      100% { top: calc(100% - 2px); }
+    }
+
+    /* 4. Cloud e Infraestructura */
+    .datacenter-rack {
+      margin-top: auto;
+      background: var(--code-bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      min-height: 120px;
+      justify-content: center;
+    }
+    .dc-blade {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 5px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: var(--muted);
+    }
+    .dc-status { display: flex; align-items: center; gap: 6px; }
+    .dc-bar {
+      width: 35px;
+      height: 4px;
+      background: var(--line);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .dc-fill {
+      height: 100%;
+      background: var(--accent-green);
+      width: 70%;
+      animation: loadPulse 2s infinite ease-in-out;
+    }
+    .dc-fill.alt1 { background: var(--bt); width: 85%; animation-delay: 0.4s; }
+    .dc-fill.alt2 { background: var(--blue); width: 45%; animation-delay: 0.8s; }
+    @keyframes loadPulse { 0%, 100% { width: 30%; } 50% { width: 95%; } }
+    .dc-led {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: blinkLed 1s infinite;
+    }
+    @keyframes blinkLed { 50% { opacity: 0.2; } }
+
+    /* 5. Automatización */
+    .auto-engine {
+      margin-top: auto;
+      background: var(--code-bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 120px;
+      justify-content: center;
+    }
+    .auto-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+    .gear {
+      width: 24px;
+      height: 24px;
+      color: var(--bt);
+      animation: spinGear 4s linear infinite;
+    }
+    .gear.reverse { animation-direction: reverse; color: var(--blue); }
+    @keyframes spinGear { to { transform: rotate(360deg); } }
+    .flow-line {
+      flex: 1;
+      height: 2px;
+      background: var(--line);
+      margin: 0 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .flow-line::after {
+      content: "";
+      position: absolute;
+      left: -50%;
+      width: 50%;
+      height: 100%;
+      background: var(--blue);
+      animation: pipeFlow 1.5s linear infinite;
+    }
+    @keyframes pipeFlow { from { left: -50%; } to { left: 100%; } }
+
+    .auto-bottom-nodes {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 6px;
+    }
+    .auto-node {
+      font-size: 9.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .auto-node i {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      animation: autoPulse 1.2s infinite;
+    }
+    .auto-node:nth-child(2) i { animation-delay: 0.4s; background: var(--accent-green); }
+    .auto-node:nth-child(3) i { animation-delay: 0.8s; background: var(--bt); }
+    @keyframes autoPulse { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.3); } }
+
+    /* PROCESO: TIMELINE DE 4 PASOS COMPLETO CON LOS CÍRCULOS Y CONTENIDO */
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      position: relative;
+      margin-top: 36px;
+      list-style: none;
+      padding: 0;
+    }
+
+    @media(min-width: 900px) {
+      .steps {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+      .steps::before {
+        content: "";
+        position: absolute;
+        top: 19px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--line);
+        z-index: 0;
+      }
+      .steps-progress-bar {
+        position: absolute;
+        top: 19px;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: var(--blue);
+        z-index: 1;
+        transition: width 0.04s linear;
+      }
+    }
+
+    .steps li {
+      position: relative;
+      padding-left: 54px;
+      z-index: 2;
+    }
+
+    @media(min-width: 900px) {
+      .steps li {
+        padding-left: 0;
+        padding-top: 58px;
+      }
+    }
+
+    .steps li::before {
+      content: attr(data-n);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--panel);
+      border: 2px solid var(--line);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--muted);
+      z-index: 2;
+      transition: border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .steps li.step-active::before {
+      border-color: var(--blue) !important;
+      color: var(--bt) !important;
+    }
+
+    .steps h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: -.02em;
+    }
+
+    .steps p {
+      color: var(--muted);
+      font-size: 14.5px;
+    }
+
+    /* Contacto */
+    .final { padding-bottom: 60px; }
+    @media(min-width: 768px) { .final { padding-bottom: 80px; } }
+
+    .final-box {
+      margin-top: 60px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    @media(min-width: 900px) {
+      .final-box {
+        margin-top: 80px;
+        border-radius: 32px;
+        padding: clamp(36px, 6vw, 70px);
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+    }
+
+    .final-box h2 {
+      font-size: clamp(24px, 5vw, 48px);
+      line-height: 1.08;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+
+    .final-box h2 span { display: block; }
+
+    .final-box h2 .hl {
+      display: inline-block;
+      background: var(--blue);
+      color: #fff;
+      padding: 0 .18em;
+      margin-top: .08em;
+      border-radius: 6px;
+    }
+
+    .kick {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      margin-bottom: 18px;
+      background: var(--glass);
+      color: var(--bt);
+    }
+
+    .final-box p {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .mail {
+      display: inline-block;
+      font-size: clamp(16px, 3.5vw, 26px);
+      font-weight: 700;
+      letter-spacing: -.03em;
+      border-bottom: 2px solid var(--bt);
+      word-break: break-all;
+      color: var(--ink);
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--glass);
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+    }
+
+    @media(min-width: 768px) {
+      .contact-form { padding: 28px; border-radius: 20px; }
+    }
+
+    .form-input {
+      background: var(--code-bg);
+      border: 1px solid var(--line);
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-input::placeholder { color: var(--muted); }
+    .form-input:focus { outline: none; border-color: var(--blue); }
+    textarea.form-input { resize: vertical; min-height: 80px; }
+
+    .contact-form .btn {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+      justify-content: center;
+    }
+
+    /* Botón Flotante WhatsApp */
+    .wsp-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: #128c7e;
+      color: #fff;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 22px rgba(7, 94, 84, 0.55);
+      z-index: 99;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .wsp-float:hover { transform: scale(1.1); background: #0b6b5e; }
+    .wsp-float svg { width: 32px; height: 32px; fill: currentColor; }
+
+    footer {
+      padding: 30px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13.5px;
+    }
+
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Cards: icono y título en la misma línea */
+    .cell:not(.s6) {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto 1fr;
+      column-gap: 14px;
+    }
+    .cell:not(.s6) .ic {
+      grid-column: 1;
+      grid-row: 1;
+      margin-bottom: 0;
+      align-self: center;
+    }
+    .cell:not(.s6) h3 {
+      grid-column: 2;
+      grid-row: 1;
+      margin: 0;
+      align-self: center;
+    }
+    .cell:not(.s6) p {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      margin: 14px 0 0;
+    }
+    .cell:not(.s6) > .code-terminal,
+    .cell:not(.s6) > .data-card-box,
+    .cell:not(.s6) > .scan-box-scatter,
+    .cell:not(.s6) > .datacenter-rack,
+    .cell:not(.s6) > .auto-engine {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      align-self: end;
+      margin-top: 16px;
+    }
+
+    /* Consultoría: icono al lado del título y la descripción */
+    .s6 > div:first-child {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .s6 > div:first-child > div:last-child {
+      margin-top: 0 !important;
+    }
+    /* Barra de scroll y controles del navegador acordes al tema */
+    :root[data-theme="dark"]  { color-scheme: dark; }
+    :root[data-theme="light"] { color-scheme: light; }
+
+    /* Modo claro: texto amarillo del código legible sobre fondo claro */
+    :root[data-theme="light"] .code-line .s { color: #b45309; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="bar">
+      <a class="logo" href="#inicio">
+        <i></i>
+        <span class="logo-text-full">ISD | Ingeniero Darwin Solano</span>
+        <span class="logo-text-short">ISD</span>
+      </a>
+      <nav>
+        <a href="#servicios">Servicios</a>
+        <a href="#proceso">Proceso</a>
+        <a class="btn" href="https://wa.me/573166423014?text=Hola%20Darwin%2C%20vi%20tu%20sitio%20web%20y%20quiero%20cotizar%20un%20proyecto." target="_blank" rel="noopener">Contactar</a>
+        <button class="theme-toggle" id="themeBtn" type="button" aria-label="Cambiar tema">
+          <svg id="themeIcon" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <!-- Hero Section -->
+    <div class="hero reveal-section">
+      <div class="wrap">
+        <div>
+          <div class="pill"><i></i>Disponible para nuevos proyectos</div>
+          <h1>Hoy es el momento de hacer realidad <em>tu idea.</em></h1>
+          <p class="lead">La tecnología nunca había estado tan al alcance. Soy Darwin Solano, ingeniero de software especializado en analítica y big data: desarrollo soluciones tecnológicas, ordeno datos y protejo infraestructuras para convertir tu proyecto en un producto real.</p>
+          <div class="cta">
+            <a class="btn" href="#contacto">Hablemos de tu proyecto →</a>
+            <a class="btn out" href="https://portafolio-profesional-bice.vercel.app/" target="_blank" rel="noopener">Ver portafolio</a>
+          </div>
+        </div>
+
+        <div class="visual" id="globeContainer" aria-hidden="true" title="Haz clic para activar pulso neuronal">
+          <canvas id="net"></canvas>
+          <div class="chip"><b>●</b> Software</div>
+          <div class="chip"><b>●</b> Datos</div>
+          <div class="chip"><b>●</b> Ciberseguridad</div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="wrap">
+        <div class="stats">
+          <div><b class="num" data-to="10" data-s="+">0</b><span>años de experiencia</span></div>
+          <div><b class="num" data-to="20" data-s="+">0</b><span>Participación de proyectos</span></div>
+          <div><b class="num" data-to="24" data-s=" h">0</b><span>tiempo de respuesta</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech Ticker -->
+    <div class="band" aria-hidden="true">
+      <div id="mq">
+        <span>TypeScript</span><span>React</span><span>Node.js</span><span>Laravel</span><span>Python</span><span>Google Cloud</span><span>PostgreSQL</span><span>AWS</span><span>Docker</span><span>Linux</span><span>OWASP</span><span>CI/CD</span>
+      </div>
+    </div>
+
+    <!-- Bento Grid Servicios -->
+    <section id="servicios" class="reveal-section">
+      <div class="wrap">
+        <span class="eyebrow">Servicios</span>
+        <h2>Todo lo técnico, en un solo lugar</h2>
+        <p class="intro">Del código a la infraestructura, y de los datos a la seguridad. Un único interlocutor para todo el proyecto.</p>
+
+        <div class="bento">
+          <!-- 1. Desarrollo de Software -->
+          <div class="cell s4">
+            <div class="ic">
+              <svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg>
+            </div>
+            <h3>Desarrollo de software</h3>
+            <p>Aplicaciones web, APIs y sistemas a medida, de la arquitectura a producción.</p>
+            <div class="code-terminal">
+              <div class="code-line"><span class="k">import</span> { <span class="f">Cluster</span> } <span class="k">from</span> <span class="s">"@isd/engine"</span>;</div>
+              <div class="code-line"><span class="k">const</span> <span class="f">app</span> = <span class="f">Cluster</span>.init({ secure: <span class="k">true</span> });</div>
+              <div class="code-line"><span class="k">await</span> <span class="f">app</span>.connectDatabase();</div>
+              <div class="code-line"><span class="k">const</span> <span class="f">api</span> = <span class="f">app</span>.createApiEndpoint();</div>
+              <div class="code-line"><span class="k">export</span> <span class="k">default</span> <span id="dynamicType"></span><span class="cursor"></span></div>
+            </div>
+          </div>
+
+          <!-- 2. Datos -->
+          <div class="cell s2">
+            <div class="ic">
+              <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+            </div>
+            <h3>Datos</h3>
+            <p>Pipelines, bases de datos y tableros que se convierten en decisiones.</p>
+            <div class="data-card-box">
+              <div class="barcode-bars">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Ciberseguridad -->
+          <div class="cell s2">
+            <div class="ic">
+              <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3>Ciberseguridad</h3>
+            <p>Auditorías, hardening y desarrollo seguro.</p>
+            <div class="scan-box-scatter">
+              <div class="scanner-line"></div>
+              <div class="scan-header">Analizando vulnerabilidades...</div>
+              <div class="scatter-dot" style="top: 35%; left: 15%;"></div>
+              <div class="scatter-dot" style="top: 70%; left: 35%; animation-delay: 0.3s;"></div>
+              <div class="scatter-dot" style="top: 25%; left: 55%; animation-delay: 0.7s;"></div>
+              <div class="scatter-dot" style="top: 80%; left: 78%; animation-delay: 1.1s;"></div>
+              <div class="scatter-dot" style="top: 45%; left: 90%; animation-delay: 0.5s;"></div>
+              <div class="scatter-dot threat" style="top: 55%; left: 25%;"></div>
+              <div class="scatter-dot threat" style="top: 35%; left: 68%;"></div>
+            </div>
+          </div>
+
+          <!-- 4. Cloud e Infraestructura -->
+          <div class="cell s2">
+            <div class="ic">
+              <svg viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.5-8A6 6 0 0 1 18 8.5 4.5 4.5 0 0 1 17.5 18H7Z"/></svg>
+            </div>
+            <h3>Cloud e infraestructura</h3>
+            <p>Despliegues confiables, contenedores y CI/CD.</p>
+            <div class="datacenter-rack">
+              <div class="dc-blade">
+                <div class="dc-status"><div class="dc-led"></div><span>AWS-RACK-01</span></div>
+                <div class="dc-bar"><div class="dc-fill"></div></div>
+              </div>
+              <div class="dc-blade">
+                <div class="dc-status"><div class="dc-led" style="background:var(--bt);"></div><span>K8S-NODE-02</span></div>
+                <div class="dc-bar"><div class="dc-fill alt1"></div></div>
+              </div>
+              <div class="dc-blade">
+                <div class="dc-status"><div class="dc-led" style="background:var(--blue);"></div><span>DOCKER-NODE-03</span></div>
+                <div class="dc-bar"><div class="dc-fill alt2"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Automatización -->
+          <div class="cell s2">
+            <div class="ic">
+              <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8.5 6H12a3 3 0 0 1 3 3v.5M8.5 18H12a3 3 0 0 0 3-3v-.5"/></svg>
+            </div>
+            <h3>Automatización</h3>
+            <p>Procesos manuales convertidos en flujos que corren solos.</p>
+            <div class="auto-engine">
+              <div class="auto-top">
+                <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+                <div class="flow-line"></div>
+                <svg class="gear reverse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+              </div>
+              <div class="auto-bottom-nodes">
+                <div class="auto-node"><i></i>Trigger</div>
+                <div class="auto-node"><i></i>Action</div>
+                <div class="auto-node"><i></i>Sync</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cell s6">
+            <div>
+              <div class="ic" style="margin-bottom:0;">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg>
+              </div>
+              <div style="margin-top: 10px;">
+                <h3>Consultoría técnica</h3>
+                <p>Revisión de arquitectura, código y riesgos antes de que se vuelvan costos.</p>
+              </div>
+            </div>
+            <a class="btn out" href="#contacto">Agendar conversación</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Proceso (CON LOS 4 PASOS COMPLETOS Y SINCRONIZADOS) -->
+    <section id="proceso" class="reveal-section">
+      <div class="wrap">
+        <span class="eyebrow">Proceso</span>
+        <h2>Claro desde el primer día</h2>
+        <p class="intro">Cuatro pasos, sin sorpresas de tiempo ni de costo.</p>
+        <ol class="steps" id="stepsContainer">
+          <div class="steps-progress-bar" id="stepsBar"></div>
+          <li data-n="1">
+            <h3>Diagnóstico</h3>
+            <p>Entiendo tu objetivo, alcance y cómo medir el éxito.</p>
+          </li>
+          <li data-n="2">
+            <h3>Propuesta</h3>
+            <p>Plan técnico, tiempos y presupuesto cerrado por escrito.</p>
+          </li>
+          <li data-n="3">
+            <h3>Desarrollo</h3>
+            <p>Entregas semanales que puedes probar y comentar.</p>
+          </li>
+          <li data-n="4">
+            <h3>Lanzamiento</h3>
+            <p>Despliegue, monitoreo y soporte posterior.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="final reveal-section">
+      <div class="wrap">
+        <div class="final-box">
+          <div>
+            <span class="kick">Construyamos algo sólido</span>
+            <h2><span>Tú lo imaginas.</span><span class="hl">Yo lo hago realidad.</span></h2>
+            <p>Cuéntame tu idea. <br>Te respondo en menos de 24 horas con los siguientes pasos.</p>
+            <a class="mail" id="em" href="mailto:darwinsolano2022@gmail.com">darwinsolano2022@gmail.com</a>
+          </div>
+
+          <form class="contact-form" onsubmit="event.preventDefault(); window.open('https://wa.me/573166423014?text=Hola%20Darwin,%20quiero%20cotizar:%20' + encodeURIComponent(document.getElementById('msg').value));">
+            <input type="text" class="form-input" placeholder="Tu Nombre o Empresa" required>
+            <input type="email" class="form-input" placeholder="Correo Electrónico" required>
+            <textarea id="msg" class="form-input" placeholder="Cuéntame brevemente sobre el proyecto..." required></textarea>
+            <button type="submit" class="btn">Enviar Mensaje Por WhatsApp →</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Botón Flotante WhatsApp -->
+  <a href="https://wa.me/573166423014?text=Hola%20Darwin%2C%20vi%20tu%20sitio%20web%20y%20deseo%20realizar%20una%20consulta." class="wsp-float" target="_blank" rel="noopener" aria-label="Contacto por WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </a>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 ISD Ingeniero Darwin Solano</span>
+      <span>Software, Analytics & Security</span>
+    </div>
+  </footer>
+
+  <script>
+    // 1. TRANSICIÓN PROFESIONAL + ENTRADA ESCALONADA POR SECCIÓN
+    const revealSections = document.querySelectorAll('.reveal-section');
+    const stagger = '.hero .pill,.hero h1,.hero .lead,.hero .cta,.hero .visual,.stats > div,.eyebrow,section h2,.intro,.cell,.steps li,.final-box > div > *,.contact-form';
+
+    revealSections.forEach(section => {
+      section.querySelectorAll(stagger).forEach((el, i) => {
+        el.classList.add('st');
+        el.style.setProperty('--i', Math.min(i, 9));
+        if (el.classList.contains('cell')) el.style.setProperty('--x', i % 2 ? '45px' : '-45px');
+      });
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+
+    revealSections.forEach(section => revealObserver.observe(section));
+
+    // 2. TIMELINE PERFECTAMENTE SINCRONIZADO POR JAVASCRIPT
+    const stepsContainer = document.getElementById('stepsContainer');
+    const stepsBar = document.getElementById('stepsBar');
+    const stepItems = stepsContainer.querySelectorAll('li');
+
+    let currentWidthPct = 0;
+    let direction = 1;
+    let pauseUntil = 0;
+    const speed = 0.35;
+
+    function animateTimeline() {
+      if (window.innerWidth >= 900) {
+        const now = performance.now();
+
+      if (currentWidthPct >= 100) {
+        // Se queda un momento en el paso 4 y reinicia desde cero
+        if (now >= pauseUntil) currentWidthPct = 0;
+      } else {
+        currentWidthPct += speed;
+        if (currentWidthPct >= 100) {
+          currentWidthPct = 100;
+          pauseUntil = now + 1200;
+        }
+      }
+
+        stepsBar.style.width = currentWidthPct + '%';
+
+        const containerRect = stepsContainer.getBoundingClientRect();
+        const currentLineX = containerRect.left + (containerRect.width * (currentWidthPct / 100));
+
+        stepItems.forEach(item => {
+          const itemRect = item.getBoundingClientRect();
+          const circleCenterX = itemRect.left + 19; 
+
+          if (currentLineX >= circleCenterX - 2) {
+            item.classList.add('step-active');
+          } else {
+            item.classList.remove('step-active');
+          }
+        });
+      } else {
+        stepItems.forEach(item => item.classList.add('step-active'));
+      }
+      requestAnimationFrame(animateTimeline);
+    }
+    requestAnimationFrame(animateTimeline);
+
+    // Tech Ticker
+    const mq = document.getElementById('mq');
+    mq.innerHTML += mq.innerHTML;
+
+    // Toggle Tema
+    const themeBtn = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const htmlEl = document.documentElement;
+
+    const sunIcon = `<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>`;
+    const moonIcon = `<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>`;
+
+    themeBtn.addEventListener('click', () => {
+      const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+      const nextTheme = isDark ? 'light' : 'dark';
+      htmlEl.setAttribute('data-theme', nextTheme);
+      themeIcon.innerHTML = isDark ? moonIcon : sunIcon;
+    });
+
+    // Escritura y borrado continuo en Terminal
+    const words = ['app.run();', 'app.listen(8080);', 'server.start();'];
+    let wIdx = 0, cIdx = 0, deleting = false;
+    const dynamicEl = document.getElementById('dynamicType');
+
+    function loopTyping() {
+      const current = words[wIdx];
+      if (deleting) {
+        dynamicEl.textContent = current.substring(0, cIdx);
+        cIdx--;
+        if (cIdx < 0) {
+          deleting = false;
+          wIdx = (wIdx + 1) % words.length;
+          setTimeout(loopTyping, 600);
+          return;
+        }
+      } else {
+        dynamicEl.textContent = current.substring(0, cIdx);
+        cIdx++;
+        if (cIdx > current.length) {
+          deleting = true;
+          setTimeout(loopTyping, 1800);
+          return;
+        }
+      }
+      setTimeout(loopTyping, deleting ? 40 : 80);
+    }
+    setTimeout(loopTyping, 500);
+
+    // Canvas Esfera 3D: red neuronal con propagación realista al hacer clic
+    (function () {
+      const cv = document.getElementById('net'), cx = cv.getContext('2d');
+      const N = 110, pts = [];
+      for (let i = 0; i < N; i++) {
+        const y = 1 - 2 * (i + .5) / N, r = Math.sqrt(1 - y * y), a = i * 2.399963;
+        pts.push([Math.cos(a) * r, y, Math.sin(a) * r]);
+      }
+
+      // Sinapsis: conexiones entre nodos cercanos
+      const adj = Array.from({ length: N }, () => []);
+      for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) {
+        const a = pts[i], c = pts[j];
+        if (Math.hypot(a[0] - c[0], a[1] - c[1], a[2] - c[2]) < .5) { adj[i].push(j); adj[j].push(i); }
+      }
+
+      const REFRACT = 1100, TRAVEL = 240, SYN_DELAY = 40, DECAY = .82, GLOW = 950, RING = 750;
+      const last = new Array(N).fill(-1e9), fireStr = new Array(N).fill(0);
+      let signals = [], queue = [], rings = [], tap = null, P = [];
+
+      function fire(i, str, t, from) {
+        last[i] = t; fireStr[i] = str; rings.push({ i, t, str });
+        if (str < .3) return;
+        adj[i].forEach(j => {
+          if (j !== from && Math.random() < .85)
+            queue.push({ a: i, b: j, t0: t + SYN_DELAY, str: str * DECAY });
+        });
+      }
+
+      let W, H, D, ry = 0, rx = .35, mx = 0, my = 0;
+
+      function size() {
+        D = Math.min(devicePixelRatio || 1, 2);
+        const b = cv.getBoundingClientRect();
+        W = b.width; H = b.height;
+        cv.width = W * D; cv.height = H * D;
+      }
+      size();
+      addEventListener('resize', size);
+
+      addEventListener('pointermove', e => {
+        const b = cv.getBoundingClientRect();
+        mx = (e.clientX - (b.left + b.width / 2)) / innerWidth;
+        my = (e.clientY - (b.top + b.height / 2)) / innerHeight;
+      }, { passive: true });
+
+      // Clic: dispara la neurona más cercana al cursor
+      document.getElementById('globeContainer').addEventListener('click', e => {
+        const b = cv.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top;
+        let best = -1, bd = 1e9;
+        P.forEach((p, i) => {
+          if (p.z < -.15) return;
+          const d = Math.hypot(p.x - x, p.y - y);
+          if (d < bd) { bd = d; best = i; }
+        });
+        const now = performance.now();
+        tap = { x, y, t: now };
+        if (best > -1) { fire(best, 1, now, -1); signals = signals.concat(queue); queue = []; }
+      });
+
+      function hexToRgb(c) {
+        c = c.trim().replace('#', '');
+        if (c.length === 3) c = c.split('').map(x => x + x).join('');
+        return [parseInt(c.slice(0, 2), 16), parseInt(c.slice(2, 4), 16), parseInt(c.slice(4, 6), 16)];
+      }
+
+      function draw(t) {
+        const cs = getComputedStyle(document.documentElement);
+        const inkVal = cs.getPropertyValue('--ink').trim();
+        const [r, g, b] = hexToRgb(cs.getPropertyValue('--bt').trim());
+
+        cx.setTransform(D, 0, 0, D, 0, 0);
+        cx.clearRect(0, 0, W, H);
+
+        ry += .003;
+        const Ry = ry + mx * 1.3, Rx = rx + my * 0.9, R = Math.min(W, H) * .36;
+        const cY = Math.cos(Ry), sY = Math.sin(Ry), cX = Math.cos(Rx), sX = Math.sin(Rx);
+
+        P = pts.map(p => {
+          let x = p[0] * cY + p[2] * sY, z = -p[0] * sY + p[2] * cY, y = p[1] * cX - z * sX;
+          z = p[1] * sX + z * cX;
+          const s = 1 / (1.8 - z * .5);
+          return { x: W / 2 + x * R * s * 1.5, y: H / 2 + y * R * s * 1.5, z, s };
+        });
+
+        // Llegada de impulsos: la neurona receptora se dispara si no está en reposo
+        const alive = [];
+        for (const s of signals) {
+          if (t >= s.t0 + TRAVEL) {
+            if (t - last[s.b] > REFRACT) fire(s.b, s.str, s.t0 + TRAVEL, s.a);
+          } else alive.push(s);
+        }
+        signals = alive.concat(queue); queue = [];
+
+        // Conexiones base
+        cx.lineWidth = 1;
+        for (let i = 0; i < N; i++) {
+          for (const j of adj[i]) {
+            if (j < i) continue;
+            const d = Math.hypot(pts[i][0] - pts[j][0], pts[i][1] - pts[j][1], pts[i][2] - pts[j][2]);
+            const al = Math.min(P[i].z, P[j].z) * .5 + .5;
+            cx.strokeStyle = `rgba(${r},${g},${b},${(al * .4 * (1 - d / .5)).toFixed(2)})`;
+            cx.beginPath(); cx.moveTo(P[i].x, P[i].y); cx.lineTo(P[j].x, P[j].y); cx.stroke();
+          }
+        }
+
+        // Impulsos viajando por cada conexión (potencial de acción)
+        for (const s of signals) {
+          const u = (t - s.t0) / TRAVEL;
+          if (u < 0) continue;
+          const A = P[s.a], B = P[s.b], k = u * u * (3 - 2 * u), k0 = Math.max(0, k - .3);
+          const hx = A.x + (B.x - A.x) * k, hy = A.y + (B.y - A.y) * k;
+          const tx = A.x + (B.x - A.x) * k0, ty = A.y + (B.y - A.y) * k0;
+
+          cx.lineWidth = 1.4;
+          cx.strokeStyle = `rgba(${r},${g},${b},${(.55 * s.str).toFixed(2)})`;
+          cx.beginPath(); cx.moveTo(A.x, A.y); cx.lineTo(hx, hy); cx.stroke();
+
+          cx.save();
+          cx.shadowColor = `rgb(${r},${g},${b})`; cx.shadowBlur = 14;
+          cx.globalAlpha = Math.min(1, .35 + s.str * .65);
+          cx.strokeStyle = inkVal; cx.lineWidth = 2;
+          cx.beginPath(); cx.moveTo(tx, ty); cx.lineTo(hx, hy); cx.stroke();
+          cx.fillStyle = inkVal;
+          cx.beginPath(); cx.arc(hx, hy, 2.6 * (.7 + s.str * .6), 0, 7); cx.fill();
+          cx.restore();
+        }
+        cx.lineWidth = 1;
+
+        // Nodos: brillan y se expanden al dispararse, luego se apagan
+        for (let i = 0; i < N; i++) {
+          const p = P[i], al = p.z * .5 + .5, hot = i % 12 === 0;
+          const age = t - last[i];
+          const e = age < GLOW ? Math.pow(1 - age / GLOW, 2) * fireStr[i] : 0;
+          const rad = (hot ? 2.8 : 1.8) * (.6 + p.s * .6) * (1 + e * 1.7);
+
+          cx.save();
+          if (e > .02) { cx.shadowColor = `rgb(${r},${g},${b})`; cx.shadowBlur = 20 * e; }
+          cx.fillStyle = e > .02 ? inkVal : (hot ? inkVal : `rgba(${r},${g},${b},${(.3 + al * .7).toFixed(2)})`);
+          cx.globalAlpha = e > .02 ? Math.min(1, .45 + e * .55) : 1;
+          cx.beginPath(); cx.arc(p.x, p.y, rad, 0, 7); cx.fill();
+          cx.restore();
+        }
+
+        // Ondas que salen de cada neurona al dispararse
+        rings = rings.filter(o => t - o.t < RING);
+        for (const o of rings) {
+          const p = P[o.i], k = (t - o.t) / RING;
+          const al = (1 - k) * .7 * o.str * (.4 + (p.z * .5 + .5) * .6);
+          cx.strokeStyle = `rgba(${r},${g},${b},${al.toFixed(3)})`;
+          cx.lineWidth = 1.5;
+          cx.beginPath(); cx.arc(p.x, p.y, 4 + k * 30 * p.s * 1.4, 0, 7); cx.stroke();
+        }
+
+        // Onda del clic
+        if (tap) {
+          const k = (t - tap.t) / 520;
+          if (k >= 1) tap = null;
+          else {
+            cx.strokeStyle = inkVal; cx.globalAlpha = (1 - k) * .5; cx.lineWidth = 1.5;
+            cx.beginPath(); cx.arc(tap.x, tap.y, k * 46, 0, 7); cx.stroke();
+            cx.globalAlpha = 1;
+          }
+        }
+        cx.lineWidth = 1;
+
+        requestAnimationFrame(draw);
+      }
+      requestAnimationFrame(draw);
+    })();
+
+    // Animación de contadores de estadísticas
+    const io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      io.unobserve(el);
+
+      el.querySelectorAll('.num').forEach(n => {
+        const to = +n.dataset.to, s = n.dataset.s || '';
+        let start = null;
+        function step(t) {
+          if (!start) start = t;
+          const progress = Math.min((t - start) / 1200, 1);
+          n.textContent = Math.round(to * progress) + s;
+          if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    }), { threshold: .2 });
+
+    document.querySelectorAll('.stats').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
